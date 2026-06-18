@@ -11,7 +11,7 @@ export default function Partidas() {
   useEffect(() => {
     async function loadPartidas() {
       try {
-        const response = await api.get(`/api/v1/partidas/?id_usuario=${userId}`);
+        const response = await api.get(`/api/v1/partidas/calendario?data_inicio=2023-01-01&data_fim=2030-12-31`);
         setPartidas(Array.isArray(response.data) ? response.data : []);
       } catch (err) {
         console.error("Erro ao carregar partidas:", err);
@@ -54,13 +54,13 @@ export default function Partidas() {
                 <Calendar className="w-3 h-3" /> Data
               </span>
               <div className="font-sora text-xl font-bold text-pt-white">
-                {new Date(partida.data_hora).toLocaleDateString('pt-BR')}
+                {partida.data_hora_partida ? new Date(partida.data_hora_partida).toLocaleDateString('pt-BR') : "--/--/----"}
               </div>
               <div className="font-geist text-sm text-pt-text-muted mb-4">
-                {new Date(partida.data_hora).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'})}
+                {partida.data_hora_partida ? new Date(partida.data_hora_partida).toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'}) : "--:--"}
               </div>
               <span className="font-space text-[9px] font-bold text-pt-bg bg-pt-primary px-2 py-1 uppercase tracking-[0.1em] self-start">
-                {partida.competicao}
+                {partida.competicao?.nome_liga || "Amistoso"}
               </span>
             </div>
 
@@ -72,9 +72,9 @@ export default function Partidas() {
                <div className="flex flex-col md:flex-row items-center justify-between gap-6 relative z-10">
                  
                  <div className="flex-1 text-center md:text-left">
-                   <div className="font-space text-[10px] text-pt-text-muted uppercase tracking-[0.3em] mb-2">Adversário</div>
-                   <h2 className="font-sora text-3xl font-extrabold uppercase tracking-tighter text-pt-white">
-                     {partida.adversario}
+                   <div className="font-space text-[10px] text-pt-text-muted uppercase tracking-[0.3em] mb-2">Mandante</div>
+                   <h2 className="font-sora text-2xl font-extrabold uppercase tracking-tighter text-pt-white">
+                     {partida.time_mandante?.nome_clube || "--"}
                    </h2>
                  </div>
 
@@ -84,17 +84,16 @@ export default function Partidas() {
 
                  <div className="flex-1 text-center md:text-right">
                    <div className="flex flex-col items-center md:items-end gap-3">
-                     <span className={`font-space text-[10px] font-bold px-3 py-1 uppercase tracking-[0.2em] ${
-                       partida.local === 'MANDANTE' ? 'border border-pt-primary text-pt-primary bg-pt-primary/10' : 'border border-pt-text-muted text-pt-text-muted bg-pt-surface-bright'
-                     }`}>
-                       {partida.local === 'MANDANTE' ? 'Em Casa' : 'Fora'}
-                     </span>
-                     <div className="flex items-center gap-1.5 font-geist text-xs text-pt-text-muted">
-                       <MapPin className="w-3 h-3" /> {partida.estadio}
-                     </div>
+                     <div className="font-space text-[10px] text-pt-text-muted uppercase tracking-[0.3em] mb-2">Visitante</div>
+                     <h2 className="font-sora text-2xl font-extrabold uppercase tracking-tighter text-pt-white">
+                       {partida.time_visitante?.nome_clube || "--"}
+                     </h2>
                    </div>
                  </div>
 
+               </div>
+               <div className="mt-4 flex items-center justify-center gap-1.5 font-geist text-xs text-pt-text-muted">
+                 <MapPin className="w-3 h-3" /> {partida.local_partida || "Local Não Definido"}
                </div>
             </div>
 

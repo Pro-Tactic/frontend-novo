@@ -24,7 +24,10 @@ export default function Jogadores() {
     if (userId) loadJogadores();
   }, [userId]);
 
-  const filtrados = jogadores.filter(j => j.nome.toLowerCase().includes(busca.toLowerCase()));
+  const filtrados = jogadores.filter(j => {
+    const nameToSearch = j.apelido || j.nome_completo || "";
+    return nameToSearch.toLowerCase().includes(busca.toLowerCase());
+  });
 
   if (loading) {
     return (
@@ -81,19 +84,19 @@ export default function Jogadores() {
           {filtrados.length > 0 ? filtrados.map((jogador) => (
             <div key={jogador.id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-pt-surface-bright/20 transition-colors group">
               <div className="col-span-1 font-sora font-extrabold text-pt-text-muted group-hover:text-pt-white transition-colors">
-                {jogador.numero || "--"}
+                {jogador.numero_camisa_clube || "--"}
               </div>
               <div className="col-span-4">
-                <div className="font-sora font-bold text-pt-white uppercase">{jogador.nome}</div>
-                <div className="font-geist text-[10px] text-pt-text-muted">{jogador.nacionalidade || "Não Informado"}</div>
+                <div className="font-sora font-bold text-pt-white uppercase">{jogador.apelido || jogador.nome_completo || "Sem Nome"}</div>
+                <div className="font-geist text-[10px] text-pt-text-muted">{jogador.nome_completo || "Nome Completo N/A"}</div>
               </div>
               <div className="col-span-3">
                 <span className="font-space text-[10px] font-bold text-pt-bg bg-pt-text-muted px-2 py-0.5 uppercase tracking-[0.1em]">
-                  {jogador.posicao}
+                  {jogador.posicao_principal || "--"}
                 </span>
               </div>
               <div className="col-span-2 font-geist text-sm text-pt-text">
-                {jogador.pe_bom || "--"}
+                {jogador.perna_boa || "--"}
               </div>
               <div className="col-span-2 text-right">
                 <span className="inline-flex items-center gap-1.5 font-space text-[9px] font-bold text-pt-primary border border-pt-primary/30 bg-pt-primary/10 px-2 py-1 uppercase tracking-[0.2em]">

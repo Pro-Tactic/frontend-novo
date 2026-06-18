@@ -33,13 +33,35 @@ export default function LoginClube() {
     setLoading(true);
     try {
       clearSession();
-      const response = await api.post("/", { username, password });
-      const { access, refresh, user_type, first_name, last_name, clube_nome } = response.data;
-      saveSession({ access, refresh, user_type, first_name, last_name, clube_nome });
+      
+      const params = new URLSearchParams();
+      params.append("username", username);
+      params.append("password", password);
+      
+      const loginRes = await api.post("/api/v1/usuarios/login", params, {
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded"
+        }
+      });
+      const access = loginRes.data.access_token;
+
+      const meRes = await api.get("/api/v1/usuarios/me", {
+        headers: { Authorization: `Bearer ${access}` }
+      });
+      
+      const user = meRes.data;
+      const user_type = user.tipo_usuario?.tipo || "COMISSAO";
+      const first_name = user.nome;
+      const last_name = user.sobrenome;
+      const clube_nome = "PROTACTIC FC";
+      
+      saveSession({ access, user_type, first_name, last_name, clube_nome });
+      
       Toast.fire({ icon: "success", title: "ACESSO VALIDADO. BEM-VINDO!" });
       navigate("/inicio", { replace: true });
-    } catch {
-      Toast.fire({ icon: "error", title: "CREDENCIAIS INVÁLIDAS." });
+    } catch (err) {
+      console.error(err);
+      Toast.fire({ icon: "error", title: "CREDENCIAIS INVÁLIDAS. " + (err.response?.data?.detail || err.message) });
     } finally {
       setLoading(false);
     }

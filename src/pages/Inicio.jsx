@@ -11,10 +11,48 @@ export default function Inicio() {
   useEffect(() => {
     async function loadDashboard() {
       try {
-        const response = await api.get(`/api/v1/dashboard/?id_usuario=${userId}`);
-        setData(response.data);
+        const [meRes, calendarioRes, classificacaoRes, jogadoresRes] = await Promise.all([
+          api.get('/api/v1/usuarios/me'),
+          api.get('/api/v1/partidas/calendario?data_inicio=2023-01-01&data_fim=2030-12-31'),
+          api.get('/api/v1/partidas/classificacao'),
+          api.get('/api/v1/jogadores/')
+        ]);
+
+        const me = meRes.data;
+        const time_id = me.id_clube;
+        const calendario = Array.isArray(calendarioRes.data) ? calendarioRes.data : [];
+        const classif = Array.isArray(classificacaoRes.data) ? classificacaoRes.data.find(c => c.time_id === time_id) || {} : {};
+        const jogadores = Array.isArray(jogadoresRes.data) ? jogadoresRes.data.slice(0, 11) : [];
+
+        // Find next game
+        const proximos = calendario.filter(p => !p.is_passada).sort((a,b) => new Date(a.data_hora_partida) - new Date(b.data_hora_partida));
+        const proximo_jogo = proximos.length > 0 ? proximos[0] : null;
+
+        const adv = proximo_jogo ? (proximo_jogo.time_mandante?.id === time_id ? proximo_jogo.time_visitante?.nome_clube : proximo_jogo.time_mandante?.nome_clube) : "TBD";
+
+        setData({
+          clube: { nome: classif.time_nome || me.clube_nome || "Meu Clube", pais: "BRA" },
+          estatisticas: { 
+            total_jogos: classif.jogos || 0, 
+            vitorias: classif.vitorias || 0, 
+            aproveitamento: classif.jogos ? Math.round((classif.pontos / (classif.jogos * 3)) * 100) : 0 
+          },
+          proximo_jogo: proximo_jogo ? {
+            competicao: proximo_jogo.competicao?.nome_liga || "Amistoso",
+            adversario: adv || "Indefinido",
+            local: proximo_jogo.time_mandante?.id === time_id ? "CASA" : "FORA",
+            data_hora: proximo_jogo.data_hora_partida,
+            estadio: proximo_jogo.local_partida || "Estádio Principal"
+          } : { competicao: "--", adversario: "Sem Partidas Agendadas", local: "--", data_hora: new Date(), estadio: "--" },
+          origem_escalacao: "Plantel Principal",
+          provavel_escalacao: jogadores.map(j => ({
+            jogador_id: j.id,
+            nome: j.apelido || j.nome_completo,
+            posicao: j.posicao_principal || "--"
+          }))
+        });
       } catch (err) {
-        console.error("Erro ao carregar dashboard:", err);
+        console.error("Erro ao carregar os dados reais do dashboard:", err);
       } finally {
         setLoading(false);
       }
