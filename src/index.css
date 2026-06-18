@@ -1,23 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Sora:wght@100..800&family=Space+Grotesk:wght@300..700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-:root {
-  /* Paleta oficial ProTactic */
-  --pt-dark:         #0B0B0B;   /* fundo principal — NÃO é #000000 */
-  --pt-surface-dark: #111111;
-  --pt-white:        #FEFEFE;
-  --pt-off-white:    #EBEBDF;
-  --pt-slate:        #7F869B;
-  --pt-blue:         #2559ED;
-  --pt-lime:         #A2FF01;
-
-  --pt-bg:           var(--pt-dark);
-  --pt-surface:      var(--pt-surface-dark);
-  --pt-text-primary: var(--pt-white);
-  --pt-text-muted:   var(--pt-slate);
-  --pt-font-writing: 15px;
-}
 
 /* Reset e base */
 *, *::before, *::after {
@@ -25,36 +10,38 @@
 }
 
 html, body, #root {
-  background-color: var(--pt-bg) !important;
-  color: var(--pt-text-primary);
+  background-color: #000000 !important;
+  color: #dfe5cf;
   margin: 0;
   padding: 0;
   min-height: 100vh;
   width: 100%;
   color-scheme: dark;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Geist', system-ui, -apple-system, sans-serif;
 }
 
 /* Seleção de texto */
 ::selection {
-  background: var(--pt-lime);
-  color: var(--pt-dark);
+  background: #9ffb00;
+  color: #000000;
 }
 
 /* Inputs globais */
 input, select, textarea {
   text-transform: none !important;
-  font-size: var(--pt-font-writing) !important;
-  font-weight: 600 !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
   letter-spacing: 0.025em !important;
-  font-family: 'Inter', system-ui, sans-serif !important;
+  font-family: 'Geist', system-ui, sans-serif !important;
+  border-radius: 0px !important;
 }
 
 input::placeholder, textarea::placeholder {
   text-transform: uppercase !important;
-  font-size: 10px !important;
-  font-weight: 800 !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
   letter-spacing: 0.2em !important;
+  font-family: 'Space Grotesk', system-ui, sans-serif !important;
   opacity: 0.3 !important;
 }
 
