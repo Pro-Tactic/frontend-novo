@@ -37,6 +37,7 @@ export default function Layout() {
     { path: "/jogadores", icon: <Users className="w-5 h-5" />, label: "MATRIZ DE ATLETAS" },
     { path: "/partidas", icon: <Calendar className="w-5 h-5" />, label: "CALENDÁRIO TÁTICO" },
     { path: "/relatorios", icon: <FileText className="w-5 h-5" />, label: "INTELIGÊNCIA" },
+    { path: "/simulacao", icon: <Activity className="w-5 h-5" />, label: "SIMULAÇÃO" },
   ];
 
   return (

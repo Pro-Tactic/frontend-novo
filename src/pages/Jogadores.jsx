@@ -82,7 +82,11 @@ export default function Jogadores() {
         {/* Table Body */}
         <div className="divide-y divide-pt-border">
           {filtrados.length > 0 ? filtrados.map((jogador) => (
-            <div key={jogador.id} className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-pt-surface-bright/20 transition-colors group">
+            <div 
+              key={jogador.id} 
+              onClick={() => window.open(`/jogador/${jogador.id}`, '_blank')}
+              className="grid grid-cols-12 gap-4 p-4 items-center hover:bg-pt-surface-bright/20 transition-colors group cursor-pointer"
+            >
               <div className="col-span-1 font-sora font-extrabold text-pt-text-muted group-hover:text-pt-white transition-colors">
                 {jogador.numero_camisa_clube || "--"}
               </div>
