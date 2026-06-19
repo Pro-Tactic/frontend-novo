@@ -76,6 +76,9 @@ const getInitialPositions = (formacaoStr, jogadores) => {
 
 export default function Simulacao() {
   const [times, setTimes] = useState([]);
+  const [ligas, setLigas] = useState([]);
+  const [ligaId, setLigaId] = useState("");
+  const [timesInLiga, setTimesInLiga] = useState([]);
   const [adversarioId, setAdversarioId] = useState("");
   const [estilo, setEstilo] = useState("normal");
   const [formacaoDropdown, setFormacaoDropdown] = useState("4-3-3");
@@ -101,17 +104,45 @@ export default function Simulacao() {
       }
 
       try {
-        const response = await api.get("/api/v1/times/");
-        setTimes(response.data);
-        if (response.data.length > 0) {
-          setAdversarioId(response.data[0].id);
+        const [ligasRes, timesRes] = await Promise.all([
+          api.get("/api/v1/ligas/"),
+          api.get("/api/v1/times/")
+        ]);
+        setLigas(ligasRes.data);
+        setTimes(timesRes.data);
+        setTimesInLiga(timesRes.data);
+        if (timesRes.data.length > 0) {
+          setAdversarioId(timesRes.data[0].id);
         }
       } catch (err) {
-        console.error("Erro ao buscar times", err);
+        console.error("Erro ao buscar dados base", err);
       }
     }
     loadInitialData();
   }, []);
+
+  useEffect(() => {
+    async function filterTimesByLiga() {
+      if (!ligaId) {
+        setTimesInLiga(times);
+        if (times.length > 0) setAdversarioId(times[0].id);
+        return;
+      }
+      try {
+        const res = await api.get(`/api/v1/ligas/${ligaId}/times`);
+        const validTimeIds = new Set(res.data.map(lt => lt.id_time));
+        const filtered = times.filter(t => validTimeIds.has(t.id));
+        setTimesInLiga(filtered);
+        if (filtered.length > 0) setAdversarioId(filtered[0].id);
+        else setAdversarioId("");
+      } catch (err) {
+        console.error("Erro ao buscar times da liga", err);
+      }
+    }
+    if (times.length > 0) {
+      filterTimesByLiga();
+    }
+  }, [ligaId, times]);
 
   const handleExecute = async () => {
     if (!timeId) return;
@@ -185,15 +216,28 @@ export default function Simulacao() {
     <div className="flex-1 flex overflow-hidden p-6 gap-6 bg-pt-bg">
       <aside className="w-80 flex flex-col gap-6 shrink-0 h-full overflow-y-auto custom-scrollbar">
         <div className="bg-pt-surface-solid border border-pt-border p-6 relative overflow-hidden shrink-0">
-          <div className="flex justify-between items-start mb-6">
+          <div className="flex flex-col gap-4 mb-6">
+            <div className="w-full">
+              <h2 className="font-space font-bold text-[10px] uppercase text-pt-text-muted mb-1">COMPETIÇÃO</h2>
+              <select 
+                className="bg-pt-surface-bright text-pt-white border border-pt-border p-2 w-full font-sora font-bold outline-none"
+                value={ligaId}
+                onChange={e => setLigaId(e.target.value)}
+              >
+                <option value="">Todas as Competições</option>
+                {ligas.map(l => (
+                  <option key={l.id} value={l.id}>{l.nome_liga}</option>
+                ))}
+              </select>
+            </div>
             <div className="w-full">
               <h2 className="font-space font-bold text-[10px] uppercase text-pt-text-muted mb-1">PRÓXIMA PARTIDA</h2>
               <select 
-                className="bg-pt-surface-bright text-pt-white border border-pt-border p-2 w-full mt-2 font-sora font-bold outline-none"
+                className="bg-pt-surface-bright text-pt-white border border-pt-border p-2 w-full font-sora font-bold outline-none"
                 value={adversarioId}
                 onChange={e => setAdversarioId(e.target.value)}
               >
-                {times.map(t => (
+                {timesInLiga.map(t => (
                   <option key={t.id} value={t.id}>{t.nome_clube}</option>
                 ))}
               </select>

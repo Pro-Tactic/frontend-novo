@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { api } from "../services/api";
 
 export default function JogadorDetalhe() {
   const { id } = useParams();
@@ -27,7 +27,7 @@ export default function JogadorDetalhe() {
       <div className="flex flex-col items-center justify-center h-screen bg-[#101508]">
         <div className="w-16 h-16 border-4 border-[#9ffb00]/20 border-t-[#9ffb00] rounded-full animate-spin z-10" />
         <p className="mt-6 text-[#c0caad] font-bold text-[10px] uppercase tracking-[0.3em] animate-pulse z-10" style={{fontFamily: 'Space Grotesk'}}>
-          Loading Profile Data...
+          Carregando Dados do Perfil...
         </p>
       </div>
     );
@@ -93,7 +93,7 @@ export default function JogadorDetalhe() {
         <header className="flex justify-between items-center w-full h-16 px-6 border-b border-[#414a34] bg-[#101508]/80 backdrop-blur-md sticky top-0 z-40">
           <div className="flex items-center gap-8">
             <div className="font-black text-[#ffffff] tracking-tighter hidden lg:block uppercase" style={{fontFamily: 'Sora', fontSize: '24px'}}>
-              PRO-TACTIC // PLAYER_PROFILE
+              PRO-TACTIC // PERFIL_JOGADOR
             </div>
           </div>
           <div className="flex items-center gap-4">
@@ -108,9 +108,9 @@ export default function JogadorDetalhe() {
           <div className="flex justify-between items-end border-b border-[#414a34]/50 pb-4">
             <div>
               <div className="flex items-center gap-2 text-[#c0caad] tracking-widest uppercase mb-2 text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>
-                <span>SQUAD_VIEW</span>
+                <span>VISÃO_DO_ELENCO</span>
                 <span className="material-symbols-outlined text-xs">chevron_right</span>
-                <span className="text-[#9ffb00]">PROFILE_{jogador.id}</span>
+                <span className="text-[#9ffb00]">PERFIL_{jogador.id}</span>
               </div>
               <h2 className="text-[#ffffff] tracking-tighter uppercase font-bold" style={{fontFamily: 'Sora', fontSize: '32px'}}>
                 {jogador.nome_completo || jogador.apelido}
@@ -119,7 +119,7 @@ export default function JogadorDetalhe() {
             <div className="flex gap-4">
               <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-[#9ffb00] animate-pulse"></span>
-                <span className="text-[#9ffb00] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>LIVE_TRACKING_ACTIVE</span>
+                <span className="text-[#9ffb00] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>RASTREAMENTO_ATIVO</span>
               </div>
             </div>
           </div>
@@ -147,15 +147,15 @@ export default function JogadorDetalhe() {
                     <div className="text-[#ffffff] font-semibold" style={{fontFamily: 'Sora', fontSize: '24px'}}>{jogador.posicao_principal || '--'}</div>
                   </div>
                   <div>
-                    <div className="text-[#c0caad] tracking-widest mb-1 text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>AGE</div>
+                    <div className="text-[#c0caad] tracking-widest mb-1 text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>IDADE</div>
                     <div className="text-[#ffffff] font-semibold" style={{fontFamily: 'Sora', fontSize: '24px'}}>{age}</div>
                   </div>
                   <div>
-                    <div className="text-[#c0caad] tracking-widest mb-1 text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>HEIGHT</div>
+                    <div className="text-[#c0caad] tracking-widest mb-1 text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>ALTURA</div>
                     <div className="text-[#ffffff] font-semibold" style={{fontFamily: 'Sora', fontSize: '24px'}}>{jogador.altura_cm || '--'} <span className="text-[#c0caad] text-[16px] font-normal" style={{fontFamily: 'Geist'}}>cm</span></div>
                   </div>
                   <div>
-                    <div className="text-[#c0caad] tracking-widest mb-1 text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>WEIGHT</div>
+                    <div className="text-[#c0caad] tracking-widest mb-1 text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>PESO</div>
                     <div className="text-[#ffffff] font-semibold" style={{fontFamily: 'Sora', fontSize: '24px'}}>{jogador.peso_kg || '--'} <span className="text-[#c0caad] text-[16px] font-normal" style={{fontFamily: 'Geist'}}>kg</span></div>
                   </div>
                 </div>
@@ -165,11 +165,12 @@ export default function JogadorDetalhe() {
             {/* Tactical Radar Card */}
             <div className="rounded-[0.25rem] p-6 flex flex-col col-span-1 lg:col-span-4 relative group transition-all duration-300 hover:shadow-[0_0_20px_rgba(162,255,1,0.15)] hover:border-[#9ffb00]" style={{background: 'rgba(28, 34, 20, 0.6)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.07)'}}>
               <div className="flex justify-between items-start mb-6">
-                <div className="text-[#ffffff] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>PERFORMANCE_RADAR</div>
+                <div className="text-[#ffffff] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>RADAR_DE_DESEMPENHO</div>
                 <span className="material-symbols-outlined text-[#c0caad]">radar</span>
               </div>
               <div className="flex-1 flex items-center justify-center relative min-h-[300px]">
-                <svg className="w-full h-full max-w-[280px] drop-shadow-[0_0_15px_rgba(162,255,1,0.1)]" viewBox="0 0 200 200">
+                {/* Changed viewBox from "0 0 200 200" to "-30 -30 260 260" to avoid cutting text */}
+                <svg className="w-full h-full max-w-[280px] drop-shadow-[0_0_15px_rgba(162,255,1,0.1)]" viewBox="-30 -30 260 260">
                   <g fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="1">
                     <polygon points="100,20 169.2,60 169.2,140 100,180 30.8,140 30.8,60"></polygon>
                     <polygon points="100,40 152,70 152,130 100,160 48,130 48,70"></polygon>
@@ -184,26 +185,27 @@ export default function JogadorDetalhe() {
                   </g>
                   <polygon points={points} fill="rgba(162, 255, 1, 0.2)" stroke="#9ffb00" strokeWidth="2"></polygon>
                   
-                  <text x="100" y="15" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="8" letterSpacing="1" textAnchor="middle">ATTACKING</text>
-                  <text x="175" y="65" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="8" letterSpacing="1" textAnchor="start">SHOOTING</text>
-                  <text x="175" y="145" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="8" letterSpacing="1" textAnchor="start">PASSING</text>
-                  <text x="100" y="195" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="8" letterSpacing="1" textAnchor="middle">CREATION</text>
-                  <text x="25" y="145" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="8" letterSpacing="1" textAnchor="end">DEFENDING</text>
-                  <text x="25" y="65" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="8" letterSpacing="1" textAnchor="end">DUELS</text>
+                  {/* Adjusted text coordinates to perfectly fit the extended viewBox */}
+                  <text x="100" y="10" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="10" letterSpacing="1" textAnchor="middle">ATAQUE</text>
+                  <text x="175" y="65" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="10" letterSpacing="1" textAnchor="start">CHUTE</text>
+                  <text x="175" y="145" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="10" letterSpacing="1" textAnchor="start">PASSE</text>
+                  <text x="100" y="200" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="10" letterSpacing="1" textAnchor="middle">CRIAÇÃO</text>
+                  <text x="25" y="145" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="10" letterSpacing="1" textAnchor="end">DEFESA</text>
+                  <text x="25" y="65" fill="#dfe5cf" fontFamily="Space Grotesk" fontSize="10" letterSpacing="1" textAnchor="end">DUELOS</text>
                 </svg>
               </div>
               <div className="grid grid-cols-3 gap-2 mt-4 text-center">
                 <div className="p-2 bg-[#1c2214]/50 border border-[#414a34]/30">
                   <div className="text-[#ffffff] font-semibold" style={{fontFamily: 'Sora', fontSize: '24px'}}>{Math.round(stats.PASSING)}</div>
-                  <div className="text-[#c0caad] text-[10px] font-bold tracking-widest" style={{fontFamily: 'Space Grotesk'}}>PASSING</div>
+                  <div className="text-[#c0caad] text-[10px] font-bold tracking-widest" style={{fontFamily: 'Space Grotesk'}}>PASSE</div>
                 </div>
                 <div className="p-2 bg-[#1c2214]/50 border border-[#414a34]/30">
                   <div className="text-[#ffffff] font-semibold" style={{fontFamily: 'Sora', fontSize: '24px'}}>{Math.round(stats.ATTACKING)}</div>
-                  <div className="text-[#c0caad] text-[10px] font-bold tracking-widest" style={{fontFamily: 'Space Grotesk'}}>ATTACK</div>
+                  <div className="text-[#c0caad] text-[10px] font-bold tracking-widest" style={{fontFamily: 'Space Grotesk'}}>ATAQUE</div>
                 </div>
                 <div className="p-2 bg-[#1c2214]/50 border border-[#414a34]/30">
                   <div className="text-[#ffffff] font-semibold" style={{fontFamily: 'Sora', fontSize: '24px'}}>{Math.round(stats.DEFENDING)}</div>
-                  <div className="text-[#c0caad] text-[10px] font-bold tracking-widest" style={{fontFamily: 'Space Grotesk'}}>DEFEND</div>
+                  <div className="text-[#c0caad] text-[10px] font-bold tracking-widest" style={{fontFamily: 'Space Grotesk'}}>DEFESA</div>
                 </div>
               </div>
             </div>
@@ -211,27 +213,27 @@ export default function JogadorDetalhe() {
             {/* Pitch Heatmap - Now used for Aggregated Stats Display */}
             <div className="rounded-[0.25rem] p-6 flex flex-col col-span-1 lg:col-span-4 relative overflow-hidden" style={{background: 'rgba(28, 34, 20, 0.6)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.07)'}}>
               <div className="flex justify-between items-start mb-6 relative z-10">
-                <div className="text-[#ffffff] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>REAL_DATABASE_METRICS</div>
+                <div className="text-[#ffffff] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>MÉTRICAS_DO_BANCO_DE_DADOS</div>
               </div>
               <div className="flex-1 flex flex-col gap-4 relative z-10">
                 <div className="bg-[#181d10] p-4 border border-[#414a34]/50 flex justify-between items-center">
-                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>GAMES ANALYZED</span>
+                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>JOGOS ANALISADOS</span>
                   <span className="text-[#9ffb00] font-bold text-xl">{jogos}</span>
                 </div>
                 <div className="bg-[#181d10] p-4 border border-[#414a34]/50 flex justify-between items-center">
-                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>TOTAL XG</span>
+                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>XG TOTAL</span>
                   <span className="text-[#ffffff] font-bold text-xl">{estatisticas?.xG ? estatisticas.xG.toFixed(2) : '0.00'}</span>
                 </div>
                 <div className="bg-[#181d10] p-4 border border-[#414a34]/50 flex justify-between items-center">
-                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>TOTAL XA</span>
+                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>XA TOTAL</span>
                   <span className="text-[#ffffff] font-bold text-xl">{estatisticas?.xA ? estatisticas.xA.toFixed(2) : '0.00'}</span>
                 </div>
                 <div className="bg-[#181d10] p-4 border border-[#414a34]/50 flex justify-between items-center">
-                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>SUCCESSFUL PASSES</span>
+                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>PASSES CERTOS</span>
                   <span className="text-[#ffffff] font-bold text-xl">{estatisticas?.passes_certos || 0}</span>
                 </div>
                 <div className="bg-[#181d10] p-4 border border-[#414a34]/50 flex justify-between items-center">
-                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>DUELS WON</span>
+                  <span className="text-[#c0caad] tracking-widest text-[10px] font-bold" style={{fontFamily: 'Space Grotesk'}}>DUELOS VENCIDOS</span>
                   <span className="text-[#ffffff] font-bold text-xl">{estatisticas?.duelos_vencidos || 0}</span>
                 </div>
               </div>
@@ -240,26 +242,26 @@ export default function JogadorDetalhe() {
             {/* Career Stats Table */}
             <div className="rounded-[0.25rem] flex flex-col col-span-1 lg:col-span-12 mt-6" style={{background: 'rgba(28, 34, 20, 0.6)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.07)'}}>
               <div className="p-6 border-b border-[#414a34]/30 flex justify-between items-center">
-                <div className="text-[#ffffff] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>SEASON_PERFORMANCE_METRICS</div>
+                <div className="text-[#ffffff] tracking-widest text-[12px] font-bold" style={{fontFamily: 'Space Grotesk'}}>MÉTRICAS_DA_TEMPORADA</div>
               </div>
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
                     <tr className="border-b border-[#414a34]/50 bg-[#1c2214]/30">
-                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal">COMPETITION</th>
-                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">GAMES</th>
+                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal">COMPETIÇÃO</th>
+                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">JOGOS</th>
                       <th className="py-4 px-6 text-[#9ffb00] tracking-widest text-[10px] font-bold text-right">xG</th>
                       <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">xA</th>
                       <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">PASSES</th>
-                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">DUELS</th>
-                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">DEF ACTS</th>
+                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">DUELOS</th>
+                      <th className="py-4 px-6 text-[#c0caad] tracking-widest text-[10px] font-normal text-right">AÇÕES DEF</th>
                     </tr>
                   </thead>
                   <tbody className="text-sm">
                     <tr className="border-b border-[#414a34]/10 hover:bg-[#1c2214]/40 transition-colors">
                       <td className="py-4 px-6 text-[#ffffff] flex items-center gap-3">
                         <div className="w-6 h-6 bg-[#262c1e] rounded border border-[#414a34]/50 flex items-center justify-center text-[10px] font-bold">ALL</div>
-                        Total Database Records
+                        Registros Totais do Banco
                       </td>
                       <td className="py-4 px-6 text-right">{jogos}</td>
                       <td className="py-4 px-6 text-[#9ffb00] font-bold text-right text-lg">{estatisticas?.xG ? estatisticas.xG.toFixed(2) : '0.00'}</td>
