@@ -93,6 +93,7 @@ export default function Simulacao() {
   const [positions, setPositions] = useState([]);
   const svgRef = useRef(null);
   const [draggingId, setDraggingId] = useState(null);
+  const [selectedBenchPlayer, setSelectedBenchPlayer] = useState(null);
 
   useEffect(() => {
     async function loadInitialData() {
@@ -154,7 +155,8 @@ export default function Simulacao() {
         formacao: formacaoAtual,
         linha_defensiva: parseInt(linhaDefensiva),
         pressao: parseInt(pressao),
-        largura: parseInt(largura)
+        largura: parseInt(largura),
+        titulares_ids: positions.length > 0 ? positions.map(p => p.id) : null
       });
       setResult(data);
       
@@ -178,6 +180,35 @@ export default function Simulacao() {
 
   const handlePointerDown = (e, id, isGk) => {
     if (isGk) return;
+    
+    // If a bench player is selected, perform swap instead of dragging
+    if (selectedBenchPlayer) {
+      const pitchPlayer = positions.find(p => p.id === id);
+      const benchPlayer = result.escalacao_reserva.find(p => p.id === selectedBenchPlayer);
+      
+      if (pitchPlayer && benchPlayer) {
+        // Swap
+        const newPositions = positions.map(p => {
+          if (p.id === id) {
+            return { ...benchPlayer, cx: pitchPlayer.cx, cy: pitchPlayer.cy, isGk: false };
+          }
+          return p;
+        });
+        
+        const newReserva = result.escalacao_reserva.map(p => {
+          if (p.id === selectedBenchPlayer) {
+            return pitchPlayer; // Note: we strip cx, cy implicitly
+          }
+          return p;
+        });
+        
+        setPositions(newPositions);
+        setResult({ ...result, escalacao_reserva: newReserva });
+        setSelectedBenchPlayer(null);
+      }
+      return;
+    }
+    
     e.target.setPointerCapture(e.pointerId);
     setDraggingId(id);
   };
@@ -245,6 +276,15 @@ export default function Simulacao() {
           </div>
           {result && (
             <div className="space-y-4">
+              <div className="bg-pt-bg border border-pt-primary/30 p-4 flex flex-col items-center justify-center mb-4 shadow-[0_0_15px_rgba(162,255,1,0.1)]">
+                <span className="font-space font-bold text-[10px] uppercase text-pt-text-muted mb-2 tracking-widest">PLACAR SIMULADO</span>
+                <div className="flex items-center gap-4">
+                  <span className="font-sora font-extrabold text-2xl text-pt-white">{result.estatisticas.gols_simulados_time}</span>
+                  <span className="font-space text-pt-primary text-xs">x</span>
+                  <span className="font-sora font-extrabold text-2xl text-red-500">{result.estatisticas.gols_simulados_adversario}</span>
+                </div>
+              </div>
+
               <div>
                 <div className="flex justify-between mb-2">
                   <span className="font-space font-bold text-[10px] uppercase text-pt-text-muted">POSSE ESTIMADA</span>
@@ -409,14 +449,29 @@ export default function Simulacao() {
         </h3>
         <div className="flex-1 overflow-y-auto space-y-2 pr-2 custom-scrollbar">
           {result && result.escalacao_reserva.map(j => (
-            <div key={j.id} className="flex items-center gap-3 p-3 bg-pt-surface-bright border border-pt-border">
-              <span className="font-space font-bold text-pt-text-muted w-6 text-center">{j.numero_camisa_clube || Math.round(j.nota)}</span>
+            <div 
+              key={j.id} 
+              onClick={() => setSelectedBenchPlayer(selectedBenchPlayer === j.id ? null : j.id)}
+              className={`flex items-center gap-3 p-3 border transition-colors cursor-pointer ${
+                selectedBenchPlayer === j.id 
+                  ? 'bg-pt-primary/20 border-pt-primary shadow-[0_0_10px_rgba(162,255,1,0.2)]' 
+                  : 'bg-pt-surface-bright border-pt-border hover:border-pt-primary/50'
+              }`}
+            >
+              <span className="font-space font-bold text-pt-text-muted w-6 text-center">
+                {j.numero_camisa_clube || Math.round(j.nota)}
+              </span>
               <div className="flex-1">
                 <p className="font-sora font-bold text-xs text-pt-white truncate max-w-[150px]">{j.nome_completo}</p>
                 <p className="font-space text-[9px] text-pt-text-muted uppercase tracking-widest">{j.posicao_principal}</p>
               </div>
             </div>
           ))}
+          {result && (
+            <div className="mt-4 p-3 bg-pt-surface-bright/50 border border-pt-border text-[9px] font-space text-pt-text-muted uppercase leading-relaxed">
+              Dica: Clique num jogador acima para selecionar, e depois clique num jogador do campo para substituir (exceto goleiro). Aperte SIMULAR para calcular com a nova escalação.
+            </div>
+          )}
         </div>
       </aside>
     </div>
