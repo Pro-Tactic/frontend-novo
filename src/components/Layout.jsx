@@ -1,5 +1,5 @@
 import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
-import { Activity, Users, Calendar, FileText, Settings, LogOut, ShieldCheck } from "lucide-react";
+import { Activity, Users, Calendar, FileText, Settings, LogOut, ShieldCheck, Building2 } from "lucide-react";
 import { clearSession, getFirstName, getUserType } from "../services/auth";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
@@ -38,6 +38,9 @@ export default function Layout() {
     { path: "/partidas", icon: <Calendar className="w-5 h-5" />, label: "CALENDÁRIO TÁTICO" },
     { path: "/relatorios", icon: <FileText className="w-5 h-5" />, label: "INTELIGÊNCIA" },
     { path: "/simulacao", icon: <Activity className="w-5 h-5" />, label: "SIMULAÇÃO" },
+    ...(userType === "ANALISTA"
+      ? [{ path: "/clubes", icon: <Building2 className="w-5 h-5" />, label: "CLUBES" }]
+      : []),
   ];
 
   return (
