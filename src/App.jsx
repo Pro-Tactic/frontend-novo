@@ -15,6 +15,7 @@ const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Simulacao = lazy(() => import("./pages/Simulacao"));
 const JogadorDetalhe = lazy(() => import("./pages/JogadorDetalhe"));
 const Clubes = lazy(() => import("./pages/Clubes"));
+const Taticas = lazy(() => import("./pages/Taticas"));
 
 function ProtectedRoute({ children }) {
   if (!isAuthenticated()) return <Navigate to="/" replace />;
@@ -58,6 +59,7 @@ export default function App() {
             <Route path="/registro"   element={<Registro />} />
             <Route path="/simulacao"  element={<Simulacao />} />
             <Route path="/clubes"     element={<Clubes />} />
+            <Route path="/taticas/:partidaId" element={<Taticas />} />
           </Route>
 
           {/* Fallback */}

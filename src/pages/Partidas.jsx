@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { getUserId } from "../services/auth";
+import { useNavigate } from "react-router-dom";
 import { Calendar, MapPin, Trophy, Target } from "lucide-react";
 
 export default function Partidas() {
   const [partidas, setPartidas] = useState([]);
   const [loading, setLoading] = useState(true);
   const userId = getUserId();
+  const navigate = useNavigate();
 
   useEffect(() => {
     async function loadPartidas() {
@@ -99,11 +101,14 @@ export default function Partidas() {
 
             {/* Ações */}
             <div className="p-6 md:w-32 border-t md:border-t-0 md:border-l border-pt-border flex items-center justify-center bg-pt-surface-bright/10">
-               <button className="flex flex-col items-center gap-2 group/btn">
+               <button 
+                 onClick={() => navigate(`/taticas/${partida.id}`)}
+                 className="flex flex-col items-center gap-2 group/btn"
+               >
                  <div className="w-10 h-10 bg-pt-surface-solid border border-pt-border flex items-center justify-center group-hover/btn:bg-pt-primary group-hover/btn:border-pt-primary transition-colors">
                    <Target className="w-4 h-4 text-pt-text-muted group-hover/btn:text-pt-bg transition-colors" />
                  </div>
-                 <span className="font-space text-[8px] font-bold text-pt-text-muted uppercase tracking-[0.2em] group-hover/btn:text-pt-primary transition-colors">Ver Relatório</span>
+                 <span className="font-space text-[8px] font-bold text-pt-text-muted uppercase tracking-[0.2em] group-hover/btn:text-pt-primary transition-colors">Tática</span>
                </button>
             </div>
 
