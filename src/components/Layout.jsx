@@ -38,7 +38,7 @@ export default function Layout() {
     { path: "/partidas", icon: <Calendar className="w-5 h-5" />, label: "CALENDÁRIO TÁTICO" },
     { path: "/relatorios", icon: <FileText className="w-5 h-5" />, label: "INTELIGÊNCIA" },
     { path: "/simulacao", icon: <Activity className="w-5 h-5" />, label: "SIMULAÇÃO" },
-    ...(userType === "ANALISTA"
+    ...(userType?.includes("Analista")
       ? [{ path: "/clubes", icon: <Building2 className="w-5 h-5" />, label: "CLUBES" }]
       : []),
   ];
@@ -87,11 +87,11 @@ export default function Layout() {
             <div className="flex flex-col">
               <span className="font-space text-[10px] font-bold text-pt-text uppercase tracking-[0.1em]">{firstName}</span>
               <span className="font-geist text-xs text-pt-text-muted flex items-center gap-1">
-                {userType === "ANALISTA" ? <ShieldCheck className="w-3 h-3 text-pt-blue" /> : <Settings className="w-3 h-3 text-pt-text-muted" />}
+                {userType?.includes("Analista") ? <ShieldCheck className="w-3 h-3 text-pt-blue" /> : <Settings className="w-3 h-3 text-pt-text-muted" />}
                 {userType}
               </span>
             </div>
-            <button 
+            <button
               onClick={handleLogout}
               className="p-2 text-pt-text-muted hover:text-pt-error hover:bg-pt-error/10 border border-transparent hover:border-pt-error/20 transition-colors"
             >

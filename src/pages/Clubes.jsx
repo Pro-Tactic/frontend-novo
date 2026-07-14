@@ -298,6 +298,7 @@ export default function Clubes() {
   const [ligaId, setLigaId] = useState(null);
   const [limite, setLimite] = useState(5);
   const [ligas, setLigas] = useState([]);
+  const [minhasLigas, setMinhasLigas] = useState([]);
 
   // Adversário
   const [times, setTimes] = useState([]);
@@ -325,12 +326,14 @@ export default function Clubes() {
   useEffect(() => {
     async function carregarMetadados() {
       try {
-        const [resLigas, resTimes] = await Promise.all([
+        const [resLigas, resTimes, resMinhasLigas] = await Promise.all([
           api.get("/api/v1/ligas/"),
           api.get("/api/v1/times/"),
+          api.get("/api/v1/ligas/meus-clubes").catch(() => ({ data: [] }))
         ]);
         setLigas(Array.isArray(resLigas.data) ? resLigas.data : []);
         setTimes(Array.isArray(resTimes.data) ? resTimes.data : []);
+        setMinhasLigas(Array.isArray(resMinhasLigas.data) ? resMinhasLigas.data : []);
       } catch {
         // silencia — não é crítico para exibição
       }
@@ -451,7 +454,7 @@ export default function Clubes() {
               className="bg-pt-surface-solid border border-pt-border text-pt-text pl-3 pr-8 py-2 appearance-none cursor-pointer hover:border-pt-primary/40 focus:outline-none focus:border-pt-primary transition-colors"
             >
               <option value="">TODAS AS LIGAS</option>
-              {ligas.map((l) => (
+              {(abaAtiva === "meu-time" ? minhasLigas : ligas).map((l) => (
                 <option key={l.id} value={l.id}>
                   {l.nome_liga}
                 </option>
