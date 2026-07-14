@@ -30,22 +30,23 @@ import {
 
 // ─── Constantes ─────────────────────────────────────────────────────
 const FASES = [
-  { key: "padrao", label: "PADRÃO", icon: <Target className="w-4 h-4" /> },
-  { key: "ofensiva", label: "OFENSIVA", icon: <Swords className="w-4 h-4" /> },
-  { key: "defensiva", label: "DEFENSIVA", icon: <Shield className="w-4 h-4" /> },
+  { key: "Criação", label: "CRIAÇÃO", icon: <Target className="w-4 h-4" /> },
+  { key: "Ofensiva", label: "OFENSIVA", icon: <Swords className="w-4 h-4" /> },
+  { key: "Defensiva", label: "DEFENSIVA", icon: <Shield className="w-4 h-4" /> },
+  { key: "Escanteio", label: "ESCANTEIO", icon: <Target className="w-4 h-4" /> },
 ];
 
 export default function Taticas() {
   const { partidaId } = useParams();
   const navigate = useNavigate();
-  const userType = getUserType();
-  const isComissao = userType === "COMISSAO";
-  const isAnalista = userType === "ANALISTA";
+  const userType = (getUserType() || "").toLowerCase();
+  const isComissao = userType.includes("comiss");
+  const isAnalista = userType.includes("analista");
 
   // ─── State ──────────────────────────────────────────────────────
   const [loading, setLoading] = useState(true);
   const [partida, setPartida] = useState(null);
-  const [faseAtiva, setFaseAtiva] = useState("padrao");
+  const [faseAtiva, setFaseAtiva] = useState("Criação");
   const [tatica, setTatica] = useState(null);
 
   // Modal jogador
@@ -99,22 +100,20 @@ export default function Taticas() {
   // ─── Filtra escalação por fase ──────────────────────────────────
   const filtrarPorFase = (escalacao) => {
     if (!escalacao) return [];
-    return escalacao.filter(
-      (e) => !e.tipo_escalacao || e.tipo_escalacao === faseAtiva
-    );
+    return escalacao; // Removed filtering by tipo_escalacao because PK is id_partida+id_jogador
   };
 
   const escalacaoPropria = filtrarPorFase(tatica?.escalacao_propria);
   const escalacaoAdversario = filtrarPorFase(tatica?.escalacao_adversario);
 
   const titularesProprios = escalacaoPropria.filter(
-    (e) => e.status_escalacao === "titular"
+    (e) => e.status_escalacao && e.status_escalacao.toLowerCase() === "titular"
   );
   const reservasProprios = escalacaoPropria.filter(
-    (e) => e.status_escalacao === "reserva"
+    (e) => e.status_escalacao && e.status_escalacao.toLowerCase() === "reserva"
   );
   const titularesAdversario = escalacaoAdversario.filter(
-    (e) => e.status_escalacao === "titular"
+    (e) => e.status_escalacao && e.status_escalacao.toLowerCase() === "titular"
   );
 
   // ─── Drag & Drop (CT only) ──────────────────────────────────────
@@ -492,10 +491,10 @@ export default function Taticas() {
               </h3>
               <div className="flex flex-wrap gap-2">
                 {reservasProprios.map((e) => (
-                  <button
+                  <div
                     key={`res-${e.id_jogador}`}
-                    onDoubleClick={() => handleDoubleClick(e)}
-                    className="flex items-center gap-2 bg-pt-surface-bright border border-pt-border px-3 py-2 hover:border-pt-primary/50 transition-colors group"
+                    onClick={() => handleDoubleClick(e)}
+                    className="flex items-center gap-2 bg-pt-surface-bright border border-pt-border px-3 py-2 hover:border-pt-primary/50 transition-colors group cursor-pointer"
                   >
                     <span className="w-7 h-7 flex items-center justify-center bg-pt-bg border border-pt-border text-pt-text font-sora font-bold text-xs group-hover:border-pt-primary/50 transition-colors">
                       {e.jogador?.numero_camisa_clube || e.id_jogador}
@@ -508,7 +507,7 @@ export default function Taticas() {
                         {e.jogador?.posicao_principal || "—"}
                       </p>
                     </div>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -662,8 +661,8 @@ export default function Taticas() {
             </div>
           )}
 
-          {/* ── Relatório Tático (Analista) ── */}
-          {isAnalista && (
+          {/* ── Relatório Tático (Visível para AD e CT) ── */}
+          {(isAnalista || isComissao) && (
             <div className="bg-pt-surface-solid border border-pt-border overflow-hidden">
               <div className="px-5 py-3 bg-pt-bg border-b border-pt-border flex items-center gap-2">
                 <FileText className="w-4 h-4 text-pt-primary" />
@@ -673,69 +672,73 @@ export default function Taticas() {
               </div>
 
               <div className="p-5 space-y-4">
-                {/* Editor */}
-                <div>
-                  <label className="font-space text-[9px] font-bold uppercase text-pt-text-muted tracking-[0.2em] block mb-2">
-                    {editandoRelatorio ? "Editando Relatório" : "Novo Relatório"}
-                  </label>
-                  <textarea
-                    value={relatorioTexto}
-                    onChange={(e) => setRelatorioTexto(e.target.value)}
-                    rows={8}
-                    className="w-full bg-pt-bg border border-pt-border p-3 text-pt-text font-geist text-sm resize-none focus:border-pt-primary/50 focus:outline-none transition-colors"
-                    placeholder="Escreva a análise tática..."
-                  />
-                </div>
+                {/* Editor apenas para Analista */}
+                {isAnalista && (
+                  <>
+                    <div>
+                      <label className="font-space text-[9px] font-bold uppercase text-pt-text-muted tracking-[0.2em] block mb-2">
+                        {editandoRelatorio ? "Editando Relatório" : "Novo Relatório"}
+                      </label>
+                      <textarea
+                        value={relatorioTexto}
+                        onChange={(e) => setRelatorioTexto(e.target.value)}
+                        rows={8}
+                        className="w-full bg-pt-bg border border-pt-border p-3 text-pt-text font-geist text-sm resize-none focus:border-pt-primary/50 focus:outline-none transition-colors"
+                        placeholder="Escreva a análise tática..."
+                      />
+                    </div>
 
-                <div>
-                  <label className="font-space text-[9px] font-bold uppercase text-pt-text-muted tracking-[0.2em] flex items-center gap-1.5 mb-2">
-                    <Image className="w-3 h-3" />
-                    URLs de Imagens (uma por linha)
-                  </label>
-                  <textarea
-                    value={relatorioImagens}
-                    onChange={(e) => setRelatorioImagens(e.target.value)}
-                    rows={3}
-                    className="w-full bg-pt-bg border border-pt-border p-3 text-pt-text font-geist text-sm resize-none focus:border-pt-primary/50 focus:outline-none transition-colors"
-                    placeholder="https://exemplo.com/imagem.png"
-                  />
-                </div>
+                    <div>
+                      <label className="font-space text-[9px] font-bold uppercase text-pt-text-muted tracking-[0.2em] flex items-center gap-1.5 mb-2">
+                        <Image className="w-3 h-3" />
+                        URLs de Imagens (uma por linha)
+                      </label>
+                      <textarea
+                        value={relatorioImagens}
+                        onChange={(e) => setRelatorioImagens(e.target.value)}
+                        rows={3}
+                        className="w-full bg-pt-bg border border-pt-border p-3 text-pt-text font-geist text-sm resize-none focus:border-pt-primary/50 focus:outline-none transition-colors"
+                        placeholder="https://exemplo.com/imagem.png"
+                      />
+                    </div>
 
-                <div className="flex gap-2">
-                  <button
-                    onClick={handleSalvarRelatorio}
-                    disabled={!relatorioTexto.trim() || salvandoRelatorio}
-                    className="flex-1 flex items-center justify-center gap-2 bg-pt-primary text-pt-bg font-space font-bold text-[10px] py-3 uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {salvandoRelatorio ? (
-                      <div className="w-4 h-4 border-2 border-pt-bg/30 border-t-pt-bg rounded-full animate-spin" />
-                    ) : (
-                      <Save className="w-3.5 h-3.5" />
+                    <div className="flex gap-2">
+                      <button
+                        onClick={handleSalvarRelatorio}
+                        disabled={!relatorioTexto.trim() || salvandoRelatorio}
+                        className="flex-1 flex items-center justify-center gap-2 bg-pt-primary text-pt-bg font-space font-bold text-[10px] py-3 uppercase tracking-widest hover:brightness-110 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {salvandoRelatorio ? (
+                          <div className="w-4 h-4 border-2 border-pt-bg/30 border-t-pt-bg rounded-full animate-spin" />
+                        ) : (
+                          <Save className="w-3.5 h-3.5" />
+                        )}
+                        {editandoRelatorio ? "ATUALIZAR" : "SALVAR"}
+                      </button>
+                      {editandoRelatorio && (
+                        <button
+                          onClick={() => {
+                            setEditandoRelatorio(null);
+                            setRelatorioTexto("");
+                            setRelatorioImagens("");
+                          }}
+                          className="px-4 py-3 border border-pt-border text-pt-text-muted font-space font-bold text-[10px] uppercase tracking-widest hover:border-pt-primary/50 transition-colors"
+                        >
+                          Cancelar
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Sucesso */}
+                    {relatorioSucesso && (
+                      <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 p-3 animate-fade-in">
+                        <Check className="w-4 h-4 text-green-400" />
+                        <span className="font-space text-[10px] font-bold text-green-400 uppercase tracking-widest">
+                          Relatório salvo com sucesso
+                        </span>
+                      </div>
                     )}
-                    {editandoRelatorio ? "ATUALIZAR" : "SALVAR"}
-                  </button>
-                  {editandoRelatorio && (
-                    <button
-                      onClick={() => {
-                        setEditandoRelatorio(null);
-                        setRelatorioTexto("");
-                        setRelatorioImagens("");
-                      }}
-                      className="px-4 py-3 border border-pt-border text-pt-text-muted font-space font-bold text-[10px] uppercase tracking-widest hover:border-pt-primary/50 transition-colors"
-                    >
-                      Cancelar
-                    </button>
-                  )}
-                </div>
-
-                {/* Sucesso */}
-                {relatorioSucesso && (
-                  <div className="flex items-center gap-2 bg-green-500/10 border border-green-500/30 p-3 animate-fade-in">
-                    <Check className="w-4 h-4 text-green-400" />
-                    <span className="font-space text-[10px] font-bold text-green-400 uppercase tracking-widest">
-                      Relatório salvo com sucesso
-                    </span>
-                  </div>
+                  </>
                 )}
 
                 {/* Relatórios existentes */}
@@ -754,12 +757,14 @@ export default function Taticas() {
                             <span className="font-space text-[8px] text-pt-text-muted uppercase tracking-widest">
                               {new Date(rel.criado_em).toLocaleString("pt-BR")}
                             </span>
-                            <button
-                              onClick={() => handleEditarRelatorio(rel)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Edit3 className="w-3.5 h-3.5 text-pt-text-muted hover:text-pt-primary transition-colors" />
-                            </button>
+                            {isAnalista && (
+                              <button
+                                onClick={() => handleEditarRelatorio(rel)}
+                                className="opacity-0 group-hover:opacity-100 transition-opacity"
+                              >
+                                <Edit3 className="w-3.5 h-3.5 text-pt-text-muted hover:text-pt-primary transition-colors" />
+                              </button>
+                            )}
                           </div>
                           <p className="font-geist text-xs text-pt-text leading-relaxed line-clamp-3">
                             {rel.conteudo_texto}
@@ -790,10 +795,13 @@ export default function Taticas() {
               </h3>
               <div className="grid grid-cols-2 gap-1.5">
                 {titularesAdversario.map((e) => (
-                  <button
+                  <div
                     key={`advlist-${e.id_jogador}`}
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => handleDoubleClick(e)}
                     onDoubleClick={() => handleDoubleClick(e)}
-                    className="flex items-center gap-2 bg-pt-bg border border-pt-border px-2 py-1.5 hover:border-red-500/30 transition-colors text-left"
+                    className="flex items-center gap-2 bg-pt-bg border border-pt-border px-2 py-1.5 hover:border-red-500/30 transition-colors text-left cursor-pointer"
                   >
                     <span className="font-sora font-bold text-[10px] text-red-400 w-5 text-center">
                       {e.jogador?.numero_camisa_clube || "?"}
@@ -801,7 +809,7 @@ export default function Taticas() {
                     <span className="font-geist text-[10px] text-pt-text truncate">
                       {e.jogador?.apelido || e.jogador?.nome_completo || `#${e.id_jogador}`}
                     </span>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>

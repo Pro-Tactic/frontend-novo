@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { isAuthenticated } from "./services/auth";
+import { isAuthenticated, getUserType } from "./services/auth";
 import LoginClube from "./pages/LoginClube";
 import LoginAdmin from "./pages/LoginAdmin";
 import Layout from "./components/Layout";
@@ -19,6 +19,15 @@ const Taticas = lazy(() => import("./pages/Taticas"));
 
 function ProtectedRoute({ children }) {
   if (!isAuthenticated()) return <Navigate to="/" replace />;
+  return children;
+}
+
+function StaffRoute({ children }) {
+  if (!isAuthenticated()) return <Navigate to="/" replace />;
+  const userType = (getUserType() || "").toLowerCase();
+  if (!userType.includes("analista") && !userType.includes("comiss")) {
+    return <Navigate to="/inicio" replace />;
+  }
   return children;
 }
 
@@ -59,7 +68,7 @@ export default function App() {
             <Route path="/registro"   element={<Registro />} />
             <Route path="/simulacao"  element={<Simulacao />} />
             <Route path="/clubes"     element={<Clubes />} />
-            <Route path="/taticas/:partidaId" element={<Taticas />} />
+            <Route path="/taticas/:partidaId" element={<StaffRoute><Taticas /></StaffRoute>} />
           </Route>
 
           {/* Fallback */}
