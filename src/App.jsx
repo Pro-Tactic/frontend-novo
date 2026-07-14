@@ -1,6 +1,6 @@
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { isAuthenticated } from "./services/auth";
+import { isAuthenticated, getUserType } from "./services/auth";
 import LoginClube from "./pages/LoginClube";
 import LoginAdmin from "./pages/LoginAdmin";
 import Layout from "./components/Layout";
@@ -18,6 +18,13 @@ const Clubes = lazy(() => import("./pages/Clubes"));
 
 function ProtectedRoute({ children }) {
   if (!isAuthenticated()) return <Navigate to="/" replace />;
+  return children;
+}
+
+function AnalystRoute({ children }) {
+  if (!isAuthenticated()) return <Navigate to="/" replace />;
+  const userType = getUserType();
+  if (!userType?.includes("Analista")) return <Navigate to="/inicio" replace />;
   return children;
 }
 
@@ -57,7 +64,7 @@ export default function App() {
             <Route path="/relatorios" element={<Relatorios />} />
             <Route path="/registro"   element={<Registro />} />
             <Route path="/simulacao"  element={<Simulacao />} />
-            <Route path="/clubes"     element={<Clubes />} />
+            <Route path="/clubes"     element={<AnalystRoute><Clubes /></AnalystRoute>} />
           </Route>
 
           {/* Fallback */}

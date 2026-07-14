@@ -546,7 +546,10 @@ export default function Clubes() {
           <button
             key={aba.id}
             id={`aba-${aba.id}`}
-            onClick={() => setAbaAtiva(aba.id)}
+            onClick={() => {
+              setAbaAtiva(aba.id);
+              setLigaId(null);
+            }}
             className={`flex items-center gap-2 px-5 py-3 border-b-2 font-space text-[10px] font-bold uppercase tracking-[0.2em] transition-all ${
               abaAtiva === aba.id
                 ? "border-pt-primary text-pt-primary"
