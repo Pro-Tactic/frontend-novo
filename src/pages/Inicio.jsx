@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { api } from "../services/api";
 import { getUserId } from "../services/auth";
-import { Calendar, Activity, ShieldCheck, TrendingUp, Trophy } from "lucide-react";
+import { Calendar, Activity, ShieldCheck, Trophy } from "lucide-react";
 
 export default function Inicio() {
   const [data, setData] = useState(null);
@@ -122,18 +122,6 @@ export default function Inicio() {
             </div>
           </div>
           
-          <div className="bg-pt-surface-solid border border-pt-border p-6 flex items-center justify-between group hover:border-pt-primary/50 transition-colors cursor-pointer">
-             <div className="flex items-center gap-4">
-               <div className="w-10 h-10 bg-pt-primary/10 flex items-center justify-center">
-                 <TrendingUp className="w-4 h-4 text-pt-primary" />
-               </div>
-               <div>
-                 <h3 className="font-space text-xs font-bold text-pt-white uppercase tracking-[0.1em]">Scouting Avançado</h3>
-                 <p className="font-geist text-[10px] text-pt-text-muted">Análise de Performance</p>
-               </div>
-             </div>
-             <span className="font-sora text-pt-primary text-xl">&rarr;</span>
-          </div>
         </div>
 
         {/* Painel Direito */}

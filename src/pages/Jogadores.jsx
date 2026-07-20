@@ -7,6 +7,9 @@ export default function Jogadores() {
   const [jogadores, setJogadores] = useState([]);
   const [loading, setLoading] = useState(true);
   const [busca, setBusca] = useState("");
+  const [filtroPosicao, setFiltroPosicao] = useState("");
+  const [filtroPe, setFiltroPe] = useState("");
+  const [showFilters, setShowFilters] = useState(false);
   const userId = getUserId();
 
   useEffect(() => {
@@ -26,8 +29,14 @@ export default function Jogadores() {
 
   const filtrados = jogadores.filter(j => {
     const nameToSearch = j.apelido || j.nome_completo || "";
-    return nameToSearch.toLowerCase().includes(busca.toLowerCase());
+    const matchBusca = nameToSearch.toLowerCase().includes(busca.toLowerCase());
+    const matchPosicao = filtroPosicao ? j.posicao_principal === filtroPosicao : true;
+    const matchPe = filtroPe ? j.perna_boa === filtroPe : true;
+    return matchBusca && matchPosicao && matchPe;
   });
+
+  const posicoesUnicas = Array.from(new Set(jogadores.map(j => j.posicao_principal).filter(Boolean)));
+  const pesUnicos = Array.from(new Set(jogadores.map(j => j.perna_boa).filter(Boolean)));
 
   if (loading) {
     return (
@@ -52,20 +61,50 @@ export default function Jogadores() {
           </p>
         </div>
         
-        <div className="flex items-center gap-2">
-          <div className="relative">
-            <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-pt-text-muted" />
-            <input 
-              type="text" 
-              placeholder="BUSCAR PELO NOME..."
-              value={busca}
-              onChange={(e) => setBusca(e.target.value)}
-              className="w-64 bg-pt-surface-solid border-b border-pt-border p-2 pl-10 text-pt-white focus:outline-none focus:border-pt-primary transition-colors"
-            />
+        <div className="flex flex-col items-end gap-2">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-pt-text-muted" />
+              <input 
+                type="text" 
+                placeholder="BUSCAR PELO NOME..."
+                value={busca}
+                onChange={(e) => setBusca(e.target.value)}
+                className="w-64 bg-pt-surface-solid border-b border-pt-border p-2 pl-10 text-pt-white focus:outline-none focus:border-pt-primary transition-colors"
+              />
+            </div>
+            <button 
+              onClick={() => setShowFilters(!showFilters)}
+              className={`p-2 border transition-colors ${showFilters ? 'border-pt-primary bg-pt-primary/10' : 'border-pt-border bg-pt-surface-solid hover:bg-pt-surface-bright'}`}
+            >
+              <Filter className={`w-4 h-4 ${showFilters ? 'text-pt-primary' : 'text-pt-white'}`} />
+            </button>
           </div>
-          <button className="p-2 border border-pt-border bg-pt-surface-solid hover:bg-pt-surface-bright transition-colors">
-            <Filter className="w-4 h-4 text-pt-white" />
-          </button>
+
+          {showFilters && (
+            <div className="flex items-center gap-2 animate-fade-up">
+              <select
+                value={filtroPosicao}
+                onChange={(e) => setFiltroPosicao(e.target.value)}
+                className="bg-pt-surface-solid border border-pt-border p-2 text-[10px] text-pt-white focus:outline-none focus:border-pt-primary transition-colors font-space uppercase tracking-[0.1em]"
+              >
+                <option value="">TODAS AS POSIÇÕES</option>
+                {posicoesUnicas.map(pos => (
+                  <option key={pos} value={pos}>{pos}</option>
+                ))}
+              </select>
+              <select
+                value={filtroPe}
+                onChange={(e) => setFiltroPe(e.target.value)}
+                className="bg-pt-surface-solid border border-pt-border p-2 text-[10px] text-pt-white focus:outline-none focus:border-pt-primary transition-colors font-space uppercase tracking-[0.1em]"
+              >
+                <option value="">QUALQUER PÉ</option>
+                {pesUnicos.map(pe => (
+                  <option key={pe} value={pe}>{pe}</option>
+                ))}
+              </select>
+            </div>
+          )}
         </div>
       </header>
 

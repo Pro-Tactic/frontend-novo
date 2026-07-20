@@ -100,7 +100,25 @@ export default function Taticas() {
   // ─── Filtra escalação por fase ──────────────────────────────────
   const filtrarPorFase = (escalacao) => {
     if (!escalacao) return [];
-    return escalacao; // Removed filtering by tipo_escalacao because PK is id_partida+id_jogador
+    const mapJogadores = new Map();
+    
+    // Fallback: primeiro preenche todos os jogadores da fase base "Criação"
+    escalacao.forEach((e) => {
+      if ((e.tipo_escalacao || "Criação") === "Criação") {
+        mapJogadores.set(e.id_jogador, e);
+      }
+    });
+
+    // Se a aba não for a base, sobrepõe com a posição específica dessa aba
+    if (faseAtiva !== "Criação") {
+      escalacao.forEach((e) => {
+        if (e.tipo_escalacao === faseAtiva) {
+          mapJogadores.set(e.id_jogador, e);
+        }
+      });
+    }
+
+    return Array.from(mapJogadores.values());
   };
 
   const escalacaoPropria = filtrarPorFase(tatica?.escalacao_propria);
@@ -160,7 +178,7 @@ export default function Taticas() {
           coord_x: jogador.coord_x,
           coord_y: jogador.coord_y,
           status_escalacao: jogador.status_escalacao,
-          tipo_escalacao: jogador.tipo_escalacao || faseAtiva,
+          tipo_escalacao: faseAtiva,
         });
         // Re-fetch para atualizar insights
         await carregarTatica();

@@ -20,8 +20,8 @@ export const atualizarPosicaoJogador = async (partidaId, jogadorId, dados) => {
   return response.data;
 };
 
-export const removerJogadorEscalacao = async (partidaId, jogadorId) => {
-  await api.delete(`/api/v1/partidas/${partidaId}/escalacoes/${jogadorId}`);
+export const removerJogadorEscalacao = async (partidaId, jogadorId, tipoEscalacao) => {
+  await api.delete(`/api/v1/partidas/${partidaId}/escalacoes/${jogadorId}?tipo_escalacao=${tipoEscalacao}`);
 };
 
 // ─── Relatório Tático ───────────────────────────────────────────────
