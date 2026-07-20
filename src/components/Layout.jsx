@@ -41,6 +41,9 @@ export default function Layout() {
     ...(userType?.includes("Analista")
       ? [{ path: "/clubes", icon: <Building2 className="w-5 h-5" />, label: "CLUBES" }]
       : []),
+    ...(userType?.includes("Comiss")
+      ? [{ path: "/elenco", icon: <Users className="w-5 h-5" />, label: "ELENCO" }]
+      : []),
   ];
 
   return (

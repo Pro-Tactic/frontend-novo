@@ -15,6 +15,7 @@ const Relatorios = lazy(() => import("./pages/Relatorios"));
 const Simulacao = lazy(() => import("./pages/Simulacao"));
 const JogadorDetalhe = lazy(() => import("./pages/JogadorDetalhe"));
 const Clubes = lazy(() => import("./pages/Clubes"));
+const Elenco = lazy(() => import("./pages/Elenco"));
 
 function ProtectedRoute({ children }) {
   if (!isAuthenticated()) return <Navigate to="/" replace />;
@@ -25,6 +26,13 @@ function AnalystRoute({ children }) {
   if (!isAuthenticated()) return <Navigate to="/" replace />;
   const userType = getUserType();
   if (!userType?.includes("Analista")) return <Navigate to="/inicio" replace />;
+  return children;
+}
+
+function TechRoute({ children }) {
+  if (!isAuthenticated()) return <Navigate to="/" replace />;
+  const userType = getUserType();
+  if (!userType?.includes("Comiss")) return <Navigate to="/inicio" replace />;
   return children;
 }
 
@@ -65,6 +73,7 @@ export default function App() {
             <Route path="/registro"   element={<Registro />} />
             <Route path="/simulacao"  element={<Simulacao />} />
             <Route path="/clubes"     element={<AnalystRoute><Clubes /></AnalystRoute>} />
+            <Route path="/elenco"     element={<TechRoute><Elenco /></TechRoute>} />
           </Route>
 
           {/* Fallback */}
